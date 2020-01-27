@@ -1,7 +1,5 @@
 author: Ir1d, TrisolarisHD, YanWQ-monad
 
-??? note " 例题[Luogu P4781【模板】拉格朗日插值](https://www.luogu.org/problemnew/show/P4781)"
-
 ### 题目大意
 
 给出 $n$ 个点 $P_i(x_i,y_i)$ ，将过这 $n$ 个点的最多 $n-1$ 次的多项式记为 $f(x)$ ，求 $f(k)$ 的值。
@@ -51,39 +49,67 @@ $$
 
 本题中，还需要求解逆元。如果先分别计算出分子和分母，再将分子乘进分母的逆元，累加进最后的答案，时间复杂度的瓶颈就不会在求逆元上，时间复杂度为 $O(n^2)$ 。
 
-### 代码实现
 
-```cpp
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-const int maxn = 2010;
-using ll = long long;
-ll mod = 998244353;
-ll n, k, x[maxn], y[maxn], ans, s1, s2;
-ll powmod(ll a, ll x) {
-  ll ret = 1ll, nww = a;
-  while (x) {
-    if (x & 1) ret = ret * nww % mod;
-    nww = nww * nww % mod;
-    x >>= 1;
-  }
-  return ret;
-}
-ll inv(ll x) { return powmod(x, mod - 2); }
-int main() {
-  scanf("%lld%lld", &n, &k);
-  for (int i = 1; i <= n; i++) scanf("%lld%lld", x + i, y + i);
-  for (int i = 1; i <= n; i++) {
-    s1 = y[i] % mod;
-    s2 = 1ll;
-    for (int j = 1; j <= n; j++)
-      if (i != j)
-        s1 = s1 * (k - x[j]) % mod, s2 = s2 * ((x[i] - x[j] % mod) % mod) % mod;
-    ans += s1 * inv(s2) % mod;
-    ans = (ans + mod) % mod;
-  }
-  printf("%lld\n", ans);
-  return 0;
-}
-```
+
+??? note " 例题[Luogu P4781【模板】拉格朗日插值](https://www.luogu.org/problemnew/show/P4781)"
+    ```cpp
+    #include<bits/stdc++.h>
+    using namespace std;
+
+    const int maxn=2e3+10,mod=998244353;
+
+    int n;
+
+    int qpow(int x,int y) {
+        int ans=1;
+
+        while(y) {
+            if(y&1) {
+                ans=1LL*ans*x%mod;
+            }
+            x=1LL*x*x%mod;
+            y>>=1;
+        }
+        return ans;
+    }
+
+    int inv(int x) {
+        return qpow(x,mod-2);
+    }
+
+    int a[maxn], b[maxn],k;
+
+    int lagrange(int k) {
+        int ans=0;
+        for(int i=1;i<=n;i++) {
+            int p=1LL*b[i],q=1LL;
+
+            for(int j=1;j<=n;j++) {
+                if(i!=j) {
+                    p=1LL*p*((k-a[j]+mod)%mod)%mod;
+                    q=1LL*q*((a[i]-a[j]+mod)%mod)%mod;
+                }
+            }
+            ans=(ans+1LL*p*inv(q)%mod)%mod;
+        }
+
+        return ans;
+    }
+
+    int main()
+    {
+        //freopen(".in","r",stdin);
+        //freopen(".out","w",stdout);
+
+        cin>>n>>k;
+        for(int i=1;i<=n;i++) {
+            scanf("%d%d",&a[i],&b[i]);
+        }
+
+        cout<<lagrange(k)<<endl;
+
+        //fclose(stdin);
+        //fclose(stdout);
+        return 0;
+    }
+    ```
