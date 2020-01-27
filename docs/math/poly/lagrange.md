@@ -1,7 +1,5 @@
 author: Ir1d, TrisolarisHD, YanWQ-monad
 
-??? note " 例题[Luogu P4781【模板】拉格朗日插值](https://www.luogu.org/problemnew/show/P4781)"
-
 ### 题目大意
 
 给出 $n$ 个点 $P_i(x_i,y_i)$ ，将过这 $n$ 个点的最多 $n-1$ 次的多项式记为 $f(x)$ ，求 $f(k)$ 的值。
@@ -87,3 +85,66 @@ int main() {
   return 0;
 }
 ```
+
+??? note " 例题[Luogu P4781【模板】拉格朗日插值](https://www.luogu.org/problemnew/show/P4781)"
+    ```cpp
+    #include<bits/stdc++.h>
+    using namespace std;
+
+    const int maxn=2e3+10,mod=998244353;
+
+    int n;
+
+    int qpow(int x,int y) {
+        int ans=1;
+
+        while(y) {
+            if(y&1) {
+                ans=1LL*ans*x%mod;
+            }
+            x=1LL*x*x%mod;
+            y>>=1;
+        }
+        return ans;
+    }
+
+    int inv(int x) {
+        return qpow(x,mod-2);
+    }
+
+    int a[maxn], b[maxn],k;
+
+    int lagrange(int k) {
+        int ans=0;
+        for(int i=1;i<=n;i++) {
+            int p=1LL*b[i],q=1LL;
+
+            for(int j=1;j<=n;j++) {
+                if(i!=j) {
+                    p=1LL*p*((k-a[j]+mod)%mod)%mod;
+                    q=1LL*q*((a[i]-a[j]+mod)%mod)%mod;
+                }
+            }
+            ans=(ans+1LL*p*inv(q)%mod)%mod;
+        }
+
+        return ans;
+    }
+
+    int main()
+    {
+        //freopen(".in","r",stdin);
+        //freopen(".out","w",stdout);
+
+        cin>>n>>k;
+        for(int i=1;i<=n;i++) {
+            scanf("%d%d",&a[i],&b[i]);
+        }
+
+        cout<<lagrange(k)<<endl;
+
+        //fclose(stdin);
+        //fclose(stdout);
+        return 0;
+    }
+    ```
